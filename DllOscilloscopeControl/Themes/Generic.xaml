@@ -1,0 +1,311 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:c="clr-namespace:Common;assembly=DllCommon" xmlns:local="clr-namespace:Oscilloscope">
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="/DllCommon;component/Themes/Generic.xaml"/>
+	</ResourceDictionary.MergedDictionaries>
+	<s:String x:Key="Text_Bar">柱状图</s:String>
+	<s:String x:Key="Text_Line">折线图</s:String>
+	<s:String x:Key="Text_LineWidth1">线宽1</s:String>
+	<s:String x:Key="Text_LineWidth2">线宽2</s:String>
+	<s:String x:Key="Text_LineWidth3">线宽3</s:String>
+	<s:String x:Key="Text_LineWidth4">线宽4</s:String>
+	<s:String x:Key="Text_LineWidth5">线宽5</s:String>
+	<s:String x:Key="Text_IsEnabled">显示</s:String>
+	<s:String x:Key="Text_IsScrolling">滚动</s:String>
+	<s:String x:Key="Text_IsAutoTranslate">归零</s:String>
+	<s:String x:Key="Text_BaselineBottom">只显示正数</s:String>
+	<s:String x:Key="Text_BaselineCenter">显示正负数</s:String>
+	<s:String x:Key="Text_BaselineTop">只显示负数</s:String>
+	<s:String x:Key="Text_AxisX">X轴：</s:String>
+	<s:String x:Key="Text_AxisY">Y轴：</s:String>
+	<s:String x:Key="Text_Clear">清空</s:String>
+	<local:ZoomValueConverter x:Key="ZoomConverter"/>
+	<Style x:Key="Slider" TargetType="{x:Type Slider}">
+		<Setter Property="OverridesDefaultStyle" Value="True"/>
+		<Setter Property="SnapsToDevicePixels" Value="True"/>
+		<Setter Property="MinHeight" Value="1"/>
+		<Setter Property="SmallChange" Value="0.1"/>
+		<Setter Property="LargeChange" Value="1"/>
+		<Setter Property="TickFrequency" Value="0.1"/>
+		<Setter Property="IsSnapToTickEnabled" Value="True"/>
+		<Setter Property="IsMoveToPointEnabled" Value="False"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Slider}">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Margin="6,0,12,0" Text="-" Foreground="{TemplateBinding Foreground}"/>
+						<TextBlock Grid.Column="2" Margin="0,0,12,0" Text="{TemplateBinding Tag}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding c:Properties.CheckedColor}"/>
+						<TextBlock Grid.Column="3" Text="{Binding Value, Converter={StaticResource ZoomConverter}, RelativeSource={RelativeSource Mode=TemplatedParent}}" Foreground="{TemplateBinding c:Properties.CheckedColor}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+						<TextBlock Grid.Column="5" Margin="12,0,6,0" Text="+" Foreground="{TemplateBinding Foreground}"/>
+						<Rectangle Grid.Row="1" Grid.ColumnSpan="6" Margin="6,0" Height="{TemplateBinding MinHeight}" VerticalAlignment="Top" Fill="{TemplateBinding Foreground}"/>
+						<Track Grid.Row="1" Grid.ColumnSpan="6" x:Name="PART_Track" Height="20">
+							<Track.DecreaseRepeatButton>
+								<RepeatButton Style="{StaticResource RepeatButton}" Command="Slider.DecreaseLarge"/>
+							</Track.DecreaseRepeatButton>
+							<Track.Thumb>
+								<Thumb Height="20" Width="12" Foreground="{TemplateBinding c:Properties.CheckedColor}" Background="{TemplateBinding c:Properties.FocusColor}" BorderBrush="{TemplateBinding c:Properties.PressedColor}">
+									<Thumb.Template>
+										<ControlTemplate TargetType="{x:Type Thumb}">
+											<Border Background="{StaticResource TransparentColor}">
+												<Polygon x:Name="Handle" Fill="{TemplateBinding Foreground}" Points="0,16 12,16 6,8" Stretch="None"/>
+											</Border>
+											<ControlTemplate.Triggers>
+												<Trigger Property="IsMouseOver" Value="True">
+													<Setter TargetName="Handle" Property="Fill" Value="{Binding Background, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+												</Trigger>
+												<Trigger Property="IsDragging" Value="True">
+													<Setter TargetName="Handle" Property="Fill" Value="{Binding BorderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+												</Trigger>
+											</ControlTemplate.Triggers>
+										</ControlTemplate>
+									</Thumb.Template>
+								</Thumb>
+							</Track.Thumb>
+							<Track.IncreaseRepeatButton>
+								<RepeatButton Style="{StaticResource RepeatButton}" Command="Slider.IncreaseLarge"/>
+							</Track.IncreaseRepeatButton>
+						</Track>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style TargetType="{x:Type local:OscilloscopeControl}">
+		<Setter Property="Background" Value="{StaticResource OscilloscopeBackground}"/>
+		<Setter Property="Foreground" Value="{StaticResource OscilloscopeForeground}"/>
+		<Setter Property="AxisColor" Value="{StaticResource AxisColor}"/>
+	</Style>
+	<Style TargetType="{x:Type local:SingleSignalMonitor}">
+		<Setter Property="Background" Value="{StaticResource OscilloscopeBackground}"/>
+		<Setter Property="Foreground" Value="{StaticResource OscilloscopeForeground}"/>
+		<Setter Property="BorderBrush" Value="{StaticResource OscilloscopeForeground}"/>
+		<Setter Property="c:Properties.FocusColor" Value="{StaticResource ControlFocusColor}"/>
+		<Setter Property="c:Properties.PressedColor" Value="{StaticResource ControlPressedColor}"/>
+		<Setter Property="c:Properties.CheckedColor" Value="{StaticResource ControlCheckedColor}"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="SnapsToDevicePixels" Value="True"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type local:SingleSignalMonitor}">
+					<Grid Background="{TemplateBinding Background}">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Margin="0,0,0,8" TextWrapping="NoWrap" TextAlignment="Center" TextTrimming="CharacterEllipsis" FontSize="{TemplateBinding FontSize}" FontFamily="{TemplateBinding FontFamily}" Text="{TemplateBinding Label}" Visibility="{TemplateBinding LabelVisibility}" Foreground="{StaticResource HighlightColor}"/>
+						<ContentPresenter Grid.Row="1" Content="{TemplateBinding Content}"/>
+						<ScrollBar Grid.Row="2" Orientation="Horizontal" Value="{Binding Content.TranslateX, RelativeSource={RelativeSource Mode=TemplatedParent}}" Maximum="{Binding Content.MaxTranslateX, RelativeSource={RelativeSource Mode=TemplatedParent}}" Minimum="{Binding Content.MinTranslateX, RelativeSource={RelativeSource Mode=TemplatedParent}}" ViewportSize="{Binding Content.ActualWidth, RelativeSource={RelativeSource Mode=TemplatedParent}}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ScrollBar}"/>
+						<ScrollBar Grid.Row="1" Grid.Column="1" Orientation="Vertical" Value="{Binding Content.TranslateY, RelativeSource={RelativeSource Mode=TemplatedParent}}" Maximum="{Binding Content.MaxTranslateY, RelativeSource={RelativeSource Mode=TemplatedParent}}" Minimum="{Binding Content.MinTranslateY, RelativeSource={RelativeSource Mode=TemplatedParent}}" ViewportSize="{Binding Content.ActualHeight, RelativeSource={RelativeSource Mode=TemplatedParent}}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ScrollBar}"/>
+						<Grid Grid.Row="3" Grid.ColumnSpan="2" Margin="0,12">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Slider Tag="{StaticResource Text_AxisX}" Margin="0,0,32,0" Orientation="Horizontal" Value="{Binding Content.ScaleX, RelativeSource={RelativeSource Mode=TemplatedParent}}" Maximum="{Binding Content.MaxScaleX, RelativeSource={RelativeSource Mode=TemplatedParent}}" Minimum="{Binding Content.MinScaleX, RelativeSource={RelativeSource Mode=TemplatedParent}}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource Slider}"/>
+							<Slider Tag="{StaticResource Text_AxisY}" Grid.Column="1" Margin="32,0,0,0" Orientation="Horizontal" Value="{Binding Content.ScaleY, RelativeSource={RelativeSource Mode=TemplatedParent}}" Maximum="{Binding Content.MaxScaleY, RelativeSource={RelativeSource Mode=TemplatedParent}}" Minimum="{Binding Content.MinScaleY, RelativeSource={RelativeSource Mode=TemplatedParent}}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource Slider}"/>
+						</Grid>
+						<Grid Grid.Row="4" Grid.ColumnSpan="2" Visibility="{TemplateBinding SettingPanelVisibility}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+							<ToggleButton IsChecked="{Binding Graph.IsGraphEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}" Content="{StaticResource Text_IsEnabled}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding Foreground}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ToggleButton}" Visibility="{TemplateBinding SettingIsGraphEnabledVisibility}"/>
+							<ToggleButton Margin="12,0" Grid.Column="1" IsChecked="{Binding Content.RefreshMode, RelativeSource={RelativeSource Mode=TemplatedParent}}" Content="{StaticResource Text_IsScrolling}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding Foreground}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ToggleButton}" Visibility="{TemplateBinding SettingRefreshModeVisibility}"/>
+							<ToggleButton Grid.Column="2" IsChecked="{Binding Graph.IsAutoTranslate, RelativeSource={RelativeSource Mode=TemplatedParent}}" Content="{StaticResource Text_IsAutoTranslate}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding Foreground}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ToggleButton}" Visibility="{TemplateBinding SettingIsAutoTranslateVisibility}"/>
+							<Grid Grid.Column="4" Margin="12,0" Visibility="{TemplateBinding SettingGraphStyleVisibility}">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="Auto"/>
+								</Grid.ColumnDefinitions>
+								<ComboBox x:Name="GraphStyle" SelectedIndex="{Binding Graph.GraphStyleIndex, RelativeSource={RelativeSource Mode=TemplatedParent}}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding Foreground}" BorderThickness="{TemplateBinding BorderThickness}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ComboBox}">
+									<ComboBoxItem Content="{StaticResource Text_Bar}"/>
+									<ComboBoxItem Content="{StaticResource Text_Line}"/>
+								</ComboBox>
+								<ComboBox Grid.Column="1" Margin="12,0,0,0" SelectedValuePath="Tag" SelectedValue="{Binding Graph.LineWidth, RelativeSource={RelativeSource Mode=TemplatedParent}}" Visibility="{Binding Graph.IsLineGraph, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource BTVConverter}}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding Foreground}" BorderThickness="{TemplateBinding BorderThickness}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ComboBox}">
+									<ComboBoxItem Content="{StaticResource Text_LineWidth1}">
+										<ComboBoxItem.Tag>
+											<s:Int32>1</s:Int32>
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="{StaticResource Text_LineWidth2}">
+										<ComboBoxItem.Tag>
+											<s:Int32>2</s:Int32>
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="{StaticResource Text_LineWidth3}">
+										<ComboBoxItem.Tag>
+											<s:Int32>3</s:Int32>
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="{StaticResource Text_LineWidth4}">
+										<ComboBoxItem.Tag>
+											<s:Int32>4</s:Int32>
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="{StaticResource Text_LineWidth5}">
+										<ComboBoxItem.Tag>
+											<s:Int32>5</s:Int32>
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+								</ComboBox>
+							</Grid>
+							<ComboBox Grid.Column="5" SelectedIndex="{Binding Graph.BaselineTypeIndex, RelativeSource={RelativeSource Mode=TemplatedParent}}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding Foreground}" BorderThickness="{TemplateBinding BorderThickness}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ComboBox}" Visibility="{TemplateBinding SettingBaselineTypeVisibility}">
+								<ComboBoxItem Content="{StaticResource Text_BaselineBottom}"/>
+								<ComboBoxItem Content="{StaticResource Text_BaselineCenter}"/>
+								<ComboBoxItem Content="{StaticResource Text_BaselineTop}"/>
+							</ComboBox>
+						</Grid>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style TargetType="{x:Type local:MultipleSignalsMonitor}">
+		<Setter Property="Background" Value="{StaticResource OscilloscopeBackground}"/>
+		<Setter Property="Foreground" Value="{StaticResource OscilloscopeForeground}"/>
+		<Setter Property="BorderBrush" Value="{StaticResource OscilloscopeForeground}"/>
+		<Setter Property="c:Properties.FocusColor" Value="{StaticResource ControlFocusColor}"/>
+		<Setter Property="c:Properties.PressedColor" Value="{StaticResource ControlPressedColor}"/>
+		<Setter Property="c:Properties.CheckedColor" Value="{StaticResource ControlCheckedColor}"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="Padding" Value="20,0,0,0"/>
+		<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+		<Setter Property="Padding" Value="20,0,0,0"/>
+		<Setter Property="SnapsToDevicePixels" Value="True"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type local:MultipleSignalsMonitor}">
+					<Grid Background="{TemplateBinding Background}">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Margin="0,0,0,8" TextWrapping="NoWrap" TextAlignment="Center" TextTrimming="CharacterEllipsis" FontSize="{TemplateBinding FontSize}" FontFamily="{TemplateBinding FontFamily}" Text="{TemplateBinding Label}" Visibility="{TemplateBinding LabelVisibility}" Foreground="{StaticResource HighlightColor}"/>
+						<ContentPresenter Grid.Row="1" Content="{TemplateBinding Content}"/>
+						<ScrollBar Grid.Row="2" Orientation="Horizontal" Value="{Binding Content.TranslateX, RelativeSource={RelativeSource Mode=TemplatedParent}}" Maximum="{Binding Content.MaxTranslateX, RelativeSource={RelativeSource Mode=TemplatedParent}}" Minimum="{Binding Content.MinTranslateX, RelativeSource={RelativeSource Mode=TemplatedParent}}" ViewportSize="{Binding Content.ActualWidth, RelativeSource={RelativeSource Mode=TemplatedParent}}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ScrollBar}"/>
+						<ScrollBar Grid.Row="1" Grid.Column="1" Orientation="Vertical" Value="{Binding Content.TranslateY, RelativeSource={RelativeSource Mode=TemplatedParent}}" Maximum="{Binding Content.MaxTranslateY, RelativeSource={RelativeSource Mode=TemplatedParent}}" Minimum="{Binding Content.MinTranslateY, RelativeSource={RelativeSource Mode=TemplatedParent}}" ViewportSize="{Binding Content.ActualHeight, RelativeSource={RelativeSource Mode=TemplatedParent}}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ScrollBar}"/>
+						<Grid Grid.Row="3" Grid.ColumnSpan="2" Margin="0,12">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Slider Tag="{StaticResource Text_AxisX}" Margin="0,0,32,0" Orientation="Horizontal" Value="{Binding Content.ScaleX, RelativeSource={RelativeSource Mode=TemplatedParent}}" Maximum="{Binding Content.MaxScaleX, RelativeSource={RelativeSource Mode=TemplatedParent}}" Minimum="{Binding Content.MinScaleX, RelativeSource={RelativeSource Mode=TemplatedParent}}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource Slider}"/>
+							<Slider Tag="{StaticResource Text_AxisY}" Grid.Column="1" Margin="32,0,0,0" Orientation="Horizontal" Value="{Binding Content.ScaleY, RelativeSource={RelativeSource Mode=TemplatedParent}}" Maximum="{Binding Content.MaxScaleY, RelativeSource={RelativeSource Mode=TemplatedParent}}" Minimum="{Binding Content.MinScaleY, RelativeSource={RelativeSource Mode=TemplatedParent}}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource Slider}"/>
+						</Grid>
+						<Grid Grid.Row="4" Grid.ColumnSpan="2" Visibility="{TemplateBinding SettingPanelVisibility}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<ToggleButton IsChecked="{Binding Content.RefreshMode, RelativeSource={RelativeSource Mode=TemplatedParent}}" Content="{StaticResource Text_IsScrolling}" Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding Foreground}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ToggleButton}" Visibility="{TemplateBinding SettingRefreshModeVisibility}"/>
+							<ContentPresenter Grid.Column="1" Margin="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Content="{TemplateBinding Labels}"/>
+						</Grid>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style TargetType="{x:Type local:OscilloscopeGraphLabel}">
+		<Setter Property="Margin" Value="8,0"/>
+		<Setter Property="MinWidth" Value="20"/>
+		<Setter Property="MinHeight" Value="2"/>
+		<Setter Property="Background" Value="{StaticResource TransparentColor}"/>
+		<Setter Property="BorderBrush" Value="{StaticResource OscilloscopeForeground}"/>
+		<Setter Property="Foreground" Value="{StaticResource OscilloscopeForeground}"/>
+		<Setter Property="c:Properties.FocusColor" Value="{StaticResource ControlFocusColor}"/>
+		<Setter Property="c:Properties.PressedColor" Value="{StaticResource ControlPressedColor}"/>
+		<Setter Property="c:Properties.CheckedColor" Value="{StaticResource ControlCheckedColor}"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type local:OscilloscopeGraphLabel}">
+					<Grid Background="{TemplateBinding Background}">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<Rectangle x:Name="Mark" Margin="0,0,8,0" VerticalAlignment="Center" Fill="{StaticResource InvalidColor}" Width="12" Height="4"/>
+						<Rectangle Grid.Column="1" Fill="{TemplateBinding BorderBrush}" VerticalAlignment="Center" Width="{TemplateBinding MinWidth}" Height="{TemplateBinding MinHeight}"/>
+						<TextBlock x:Name="Label" Grid.Column="2" Margin="4,0,0,0" Foreground="{TemplateBinding Foreground}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Text="{TemplateBinding Content}"/>
+					</Grid>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsChecked" Value="True">
+							<Setter TargetName="Mark" Property="Fill" Value="{Binding Path=(c:Properties.CheckedColor), RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+						</Trigger>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="Label" Property="Foreground" Value="{Binding Path=(c:Properties.FocusColor), RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+						</Trigger>
+						<Trigger Property="IsPressed" Value="True">
+							<Setter TargetName="Label" Property="Foreground" Value="{Binding Path=(c:Properties.PressedColor), RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style TargetType="{x:Type local:TextControl}">
+		<Setter Property="SnapsToDevicePixels" Value="True"/>
+		<Setter Property="Padding" Value="12,8"/>
+		<Setter Property="Background" Value="{StaticResource OscilloscopeBackground}"/>
+		<Setter Property="Foreground" Value="{StaticResource OscilloscopeForeground}"/>
+		<Setter Property="BorderBrush" Value="{StaticResource HighlightColor}"/>
+		<Setter Property="c:Properties.FocusColor" Value="{StaticResource ControlFocusColor}"/>
+		<Setter Property="c:Properties.PressedColor" Value="{StaticResource ControlPressedColor}"/>
+		<Setter Property="BorderThickness" Value="8,0"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type local:TextControl}">
+					<Grid Background="{TemplateBinding Background}">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						<Rectangle Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="2" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1" SnapsToDevicePixels="True"/>
+						<ScrollViewer x:Name="ScrollViewer" Grid.Row="2" Grid.ColumnSpan="2" Margin="{TemplateBinding Padding}" Padding="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Foreground="{TemplateBinding Foreground}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" Style="{StaticResource ScrollViewer}">
+							<TextBlock TextWrapping="Wrap" Foreground="{TemplateBinding Foreground}" Text="{TemplateBinding Text}" FontSize="{TemplateBinding FontSize}" FontFamily="{TemplateBinding FontFamily}" SnapsToDevicePixels="True"/>
+						</ScrollViewer>
+						<Border Grid.RowSpan="2" Margin="12,0,0,0" HorizontalAlignment="Left" Background="{TemplateBinding Background}" Padding="{TemplateBinding BorderThickness}">
+							<TextBlock x:Name="Label" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding BorderBrush}" Text="{TemplateBinding Label}" FontSize="{TemplateBinding FontSize}" FontFamily="{TemplateBinding FontFamily}" SnapsToDevicePixels="True"/>
+						</Border>
+						<Button x:Name="BtnClear" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,12,0" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="8,0" Background="{TemplateBinding Background}" Foreground="{TemplateBinding BorderBrush}" BorderBrush="{TemplateBinding BorderBrush}" FontSize="{TemplateBinding FontSize}" FontFamily="{TemplateBinding FontFamily}" c:Properties.CornerRadius="4" Style="{StaticResource Button}" Content="×" ToolTip="{StaticResource Text_Clear}"/>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+</ResourceDictionary>

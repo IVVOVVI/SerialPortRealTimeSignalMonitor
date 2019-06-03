@@ -1,0 +1,104 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:c="clr-namespace:Common;assembly=DllCommon" xmlns:local="clr-namespace:SerialPort">
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="/DllCommon;component/Themes/Generic.xaml"/>
+	</ResourceDictionary.MergedDictionaries>
+	<s:String x:Key="Text_Message">通知</s:String>
+	<s:String x:Key="Text_Refresh">刷新</s:String>
+	<s:String x:Key="Text_SerialPort">串口（COM）</s:String>
+	<s:String x:Key="Text_BaudRate">波特率（BaudRate）</s:String>
+	<s:String x:Key="Text_Parity">奇偶校验位（Parity）</s:String>
+	<s:String x:Key="Text_StopBits">停止位（StopBits）</s:String>
+	<s:String x:Key="Text_DataBits">数据长度（DataBits）</s:String>
+	<s:String x:Key="Text_Simulator">模拟器</s:String>
+	<s:String x:Key="Text_OnOff">开关</s:String>
+	<ResourceDictionary x:Key="Resources">
+		<s:String x:Key="Text_StartFailed">无法启动指定的设备！</s:String>
+	</ResourceDictionary>
+	<Style TargetType="{x:Type local:SerialPortControl}">
+		<Setter Property="c:Properties.FocusColor" Value="{StaticResource ControlFocusColor}"/>
+		<Setter Property="c:Properties.PressedColor" Value="{StaticResource ControlPressedColor}"/>
+		<Setter Property="c:Properties.CheckedColor" Value="{StaticResource ControlCheckedColor}"/>
+		<Setter Property="Background" Value="{StaticResource OscilloscopeBackground}"/>
+		<Setter Property="Foreground" Value="{StaticResource OscilloscopeForeground}"/>
+		<Setter Property="BorderBrush" Value="{StaticResource HighlightColor}"/>
+		<Setter Property="LabelColor" Value="{StaticResource TitleColor}"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="Resources" Value="{StaticResource Resources}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:SerialPortControl}">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						<ScrollViewer Margin="0,0,0,8" Grid.ColumnSpan="2" Foreground="{TemplateBinding Foreground}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ScrollViewer}" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+							<StackPanel>
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="Auto"/>
+									</Grid.ColumnDefinitions>
+									<TextBlock Text="{StaticResource Text_SerialPort}" Margin="0,0,8,4" Foreground="{TemplateBinding LabelColor}" TextWrapping="Wrap" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"/>
+									<Button x:Name="BtnRefresh" Grid.Column="1" Width="52" Padding="0,0,4,2" Foreground="{TemplateBinding Foreground}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" FontSize="{TemplateBinding FontSize}" HorizontalContentAlignment="Right" ToolTip="{StaticResource Text_Refresh}" Style="{StaticResource IconButton}" Content="F1 M 8,8L 8,0L 28,0L 36,0L 36,8L 36,28L 28,28L 28,13C 15.4,20.5 7,34.3 7,50C 7,73.7 26.3,93 50,93C 73.7,93 93,73.7 93,50C 93,31.6 81.5,15.9 65.2,9.8L 67.2,3C 86.3,10 100,28.4 100,50C 100,77.6 77.6,100 50,100C 22.4,100 0,77.6 0,50C 0,32.4 9.1,16.9 22.9,8L 8,8 Z"/>
+								</Grid>
+								<ComboBox ItemsSource="{TemplateBinding PortNames}" SelectedIndex="{Binding PortIndex, RelativeSource={RelativeSource Mode=TemplatedParent}}" Background="{TemplateBinding Background}" Foreground="{TemplateBinding Foreground}" BorderBrush="{TemplateBinding Foreground}" BorderThickness="{TemplateBinding BorderThickness}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ComboBox}"/>
+								<TextBlock Text="{StaticResource Text_BaudRate}" Margin="0,8,0,4" Foreground="{TemplateBinding LabelColor}" TextWrapping="Wrap" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"/>
+								<TextBox Text="{Binding BaudRateString, RelativeSource={RelativeSource Mode=TemplatedParent}}" TextWrapping="NoWrap" TextAlignment="Right" Background="{StaticResource TransparentColor}" Foreground="{TemplateBinding Foreground}" BorderBrush="{TemplateBinding Foreground}" SelectionBrush="{TemplateBinding c:Properties.CheckedColor}" CaretBrush="{TemplateBinding c:Properties.CheckedColor}" BorderThickness="{TemplateBinding BorderThickness}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" VerticalContentAlignment="Center" Style="{StaticResource TextBox}"/>
+								<TextBlock Text="{StaticResource Text_Parity}" Margin="0,8,0,4" Foreground="{TemplateBinding LabelColor}" TextWrapping="Wrap" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"/>
+								<ComboBox SelectedIndex="{Binding Parity, RelativeSource={RelativeSource Mode=TemplatedParent}}" Background="{TemplateBinding Background}" Foreground="{TemplateBinding Foreground}" BorderBrush="{TemplateBinding Foreground}" BorderThickness="{TemplateBinding BorderThickness}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ComboBox}">
+									<ComboBoxItem Content="None"/>
+									<ComboBoxItem Content="Odd"/>
+									<ComboBoxItem Content="Even"/>
+									<ComboBoxItem Content="Mark"/>
+									<ComboBoxItem Content="Space"/>
+								</ComboBox>
+								<TextBlock Text="{StaticResource Text_StopBits}" Margin="0,8,0,4" Foreground="{TemplateBinding LabelColor}" TextWrapping="Wrap" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"/>
+								<ComboBox SelectedIndex="{Binding StopBits, RelativeSource={RelativeSource Mode=TemplatedParent}}" Background="{TemplateBinding Background}" Foreground="{TemplateBinding Foreground}" BorderBrush="{TemplateBinding Foreground}" BorderThickness="{TemplateBinding BorderThickness}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ComboBox}">
+									<ComboBoxItem Content="None"/>
+									<ComboBoxItem Content="One"/>
+									<ComboBoxItem Content="Two"/>
+									<ComboBoxItem Content="OnePointFive"/>
+								</ComboBox>
+								<TextBlock Text="{StaticResource Text_DataBits}" Margin="0,8,0,4" Foreground="{TemplateBinding LabelColor}" TextWrapping="Wrap" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"/>
+								<ComboBox SelectedIndex="{Binding DataBits, RelativeSource={RelativeSource Mode=TemplatedParent}}" Background="{TemplateBinding Background}" Foreground="{TemplateBinding Foreground}" BorderBrush="{TemplateBinding Foreground}" BorderThickness="{TemplateBinding BorderThickness}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ComboBox}">
+									<ComboBoxItem Content="8" Foreground="{TemplateBinding Foreground}"/>
+									<ComboBoxItem Content="7" Foreground="{TemplateBinding Foreground}"/>
+									<ComboBoxItem Content="6" Foreground="{TemplateBinding Foreground}"/>
+									<ComboBoxItem Content="5" Foreground="{TemplateBinding Foreground}"/>
+								</ComboBox>
+								<ToggleButton Margin="0,8" IsChecked="{Binding IsSimulator, RelativeSource={RelativeSource Mode=TemplatedParent}}" Content="{StaticResource Text_Simulator}" Foreground="{TemplateBinding LabelColor}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding Foreground}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" c:Properties.CheckedColor="{TemplateBinding c:Properties.CheckedColor}" Style="{StaticResource ToggleButton}"/>
+							</StackPanel>
+						</ScrollViewer>
+						<c:MessageControl Grid.Row="1" Margin="0,0,8,0" Background="{TemplateBinding Background}" Foreground="{TemplateBinding Foreground}" BorderBrush="{TemplateBinding BorderBrush}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.CheckedColor}" Label="{StaticResource Text_Message}" Text="{TemplateBinding Message}"/>
+						<ToggleButton Grid.Row="1" Grid.Column="1" Width="100" Height="100" Foreground="{TemplateBinding Foreground}" Background="{StaticResource InvalidColor}" BorderBrush="{TemplateBinding c:Properties.CheckedColor}" c:Properties.FocusColor="{TemplateBinding c:Properties.FocusColor}" c:Properties.PressedColor="{TemplateBinding c:Properties.PressedColor}" IsChecked="{Binding IsOn, RelativeSource={RelativeSource Mode=TemplatedParent}}" ToolTip="{StaticResource Text_OnOff}">
+							<ToggleButton.Template>
+								<ControlTemplate TargetType="{x:Type ToggleButton}">
+									<Grid Background="{StaticResource TransparentColor}">
+										<Rectangle x:Name="Mark" Margin="0,0,0,64" Width="20" Height="4" HorizontalAlignment="Center" VerticalAlignment="Center" Fill="{TemplateBinding Background}" IsHitTestVisible="False"/>
+										<Path x:Name="Icon" Margin="0,24,0,0" Height="64" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Fill="{TemplateBinding Foreground}" IsHitTestVisible="False" Data="F1 M 16,0C 16.6,0 17,0.4 17,1L 17,19C 17,19.6 16.6,20 16,20C 15.4,20 15,19.6 15,19L 15,1C 15,0.4 15.4,0 16,0 Z M 32,20C 32,28.8 24.8,36 16,36C 7.2,36 0,28.8 0,20C 0,12.7 4.5,6.6 11.1,4.7L 11.6,4.6C 12.2,4.6 12.6,5 12.6,5.6C 12.6,6 12.4,6.4 12,6.5L 11.8,6.6C 6.1,8.4 2,13.7 2,20C 2,27.7 8.3,34 16,34C 23.7,34 30,27.7 30,20C 30,13.7 26,8.3 20.2,6.6C 19.8,6.5 19.4,6.1 19.4,5.6C 19.4,5 19.8,4.6 20.4,4.6L 20.6,4.6L 20.6,4.6C 27.5,6.4 32,12.5 32,20 Z"/>
+									</Grid>
+									<ControlTemplate.Triggers>
+										<Trigger Property="IsChecked" Value="True">
+											<Setter TargetName="Mark" Property="Fill" Value="{Binding BorderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+										</Trigger>
+										<Trigger Property="IsMouseOver" Value="True">
+											<Setter TargetName="Icon" Property="Fill" Value="{Binding Path=(c:Properties.FocusColor), RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+										</Trigger>
+										<Trigger Property="IsPressed" Value="True">
+											<Setter TargetName="Icon" Property="Fill" Value="{Binding Path=(c:Properties.PressedColor), RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+										</Trigger>
+									</ControlTemplate.Triggers>
+								</ControlTemplate>
+							</ToggleButton.Template>
+						</ToggleButton>
+					</Grid>
+				</ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
