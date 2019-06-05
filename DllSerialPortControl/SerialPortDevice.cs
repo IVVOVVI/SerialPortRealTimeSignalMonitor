@@ -342,9 +342,11 @@ namespace SerialPort
 		{
 			try
 			{
+				int temp;
 				do
 				{
-					m_Handler.Push((byte)m_SerialPort.ReadByte());
+					temp = m_SerialPort.ReadByte();
+					if (temp >= 0) m_Handler.Push((byte)temp);
 				}
 				while (true);
 			}
